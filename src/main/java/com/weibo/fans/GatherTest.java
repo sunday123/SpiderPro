@@ -11,9 +11,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -64,7 +67,9 @@ public class GatherTest {
         System.out.println("-----------------------------------------------");
         System.out.println("粉丝的详细数据:");
 
-        fans_count = NumberUtil.isInteger(fan.getFollowers_count()) ? Integer.valueOf(fan.getFollowers_count()) : 100;//超过万的，当作100
+
+
+        fans_count = getFollowersCount(fan.getFollowers_count());
         max_page = fans_count / 20 + 1;
         max_page = max_page > 250 ? 250 : max_page;
         for (int i = 1; i <= max_page; i++) {
@@ -105,6 +110,17 @@ public class GatherTest {
         System.out.println("fin");
 
 
+    }
+
+    private static int getFollowersCount(String countCNStr) {
+        NumberFormat fmt = NumberFormat.getCompactNumberInstance(Locale.CHINA, NumberFormat.Style.SHORT);
+        Number count = 0;
+        try {
+            count = fmt.parse(countCNStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return count.intValue();
     }
 
     public static Fan getFan(Long uid) throws IOException {
